@@ -1,3 +1,5 @@
+require "pry"
+
 class Maze
 
 	attr_accessor :list_of_rooms
@@ -8,7 +10,7 @@ class Maze
 
 	def print_maze
 		@list_of_rooms.each do |room|
-			puts "#{room.room_description} which exit is #{room.room_exit}"
+			puts "#{room.room_description}"
 		end
 	end
 end
@@ -16,11 +18,11 @@ end
 
 class Room
 	
-	attr_accessor :room_description, :room_exit
+	attr_accessor :room_description, :room_exits
 
-	def initialize des, exit
+	def initialize des, north_exit, east_exit, south_exit, west_exit
 		@room_description = des
-		@room_exit = exit
+		@room_exits = {"N" => north_exit, "E" => east_exit, "S" => south_exit, "W" => west_exit}
 	end
 end
 
@@ -28,9 +30,8 @@ class Game
 
 	def initialize maze, player
 		@maze = maze
-		@position = 0
-		@end_game = true
 		@player = player
+		@end_game = true
 	end
 
 	def start_game
@@ -50,23 +51,31 @@ class Game
 	end
 
 	def ask_user
-		puts @maze.list_of_rooms[@position].room_description
+		puts @maze.list_of_rooms[@player.position].room_description
 		puts "Please enter where would you like to head"
 		@user_input = gets.chomp
 	end
 
 	def evaluate_turn
-		if (@user_input == @maze.list_of_rooms[@position].room_exit)
-			@position = @position + 1
-			puts "Congrats, you have advanced to room #{@position}"
-		else
-			puts "Try again. You still in room #{@position}"
+		# binding.pry
+
+		if @maze.list_of_rooms[@player.position].room_exits[@user_input] == false
+			puts "Try again. You still in room #{@player.position}"
 			@player.substract_life
+		else
+			@player.position = @maze.list_of_rooms[@player.position].room_exits[@user_input]
+			puts "Congrats, you have advanced to room #{@player.position}"
 		end
+	
+	# 	if @user_input == @maze.list_of_rooms[@player.position].room_exit
+	# 		@player.position = @player.position + 1
+	# 	else
+	# 		
+	# 	end
 	end
 
 	def end_game
-		if @position == 4
+		if @player.position == 10
 			@end_game = false
 		else
 			@end_game
@@ -76,9 +85,12 @@ end
 
 class Player
 
+	attr_accessor :position
+
 	def initialize 
-		@lifes = 2
+		@lifes = 3
 		@player_alive = true
+		@position = 0
 	end
 
 	def substract_life
@@ -94,13 +106,18 @@ class Player
 	end
 end
 
-room1 = Room.new("You are in a forest","S")
-room2 = Room.new("You are in a castle","E")
-room3 = Room.new("You are in a cave","E")
-room4 = Room.new("You are in a mountain","S")
-room5 = Room.new("You are in Mars","S")
+room0 = Room.new("You are in a forest, room number 0", false, false, 1, false)
+room1 = Room.new("You are in a castle, room number 1", false, 2, 7, false)
+room2 = Room.new("You are in a cave, room number 2", false, 3, false, false)
+room3 = Room.new("You are in a mountain, room number 3",false, false, 4, false)
+room4 = Room.new("You are in Mars, room number 4", false, false, 5, false)
+room5 = Room.new("You are in Saturn, room number 5", false, 6, false, false)
+room6 = Room.new("You are in the last room!, room number 6", false, 10, false, false)
+room7 = Room.new("You are in Philadelphia, room number 7", false, false, 8, false)
+room8 = Room.new("You are in Madrid, room number 8", false, 9, false, false)
+room9 = Room.new("You are in Barcelona, room number 9", false, 5, false, false)
 
-rooms = [room1, room2, room3, room4, room5]
+rooms = [room0, room1, room2, room3, room4, room5, room6, room7,  room8, room9]
 maze1 = Maze.new rooms
 
 # maze1.print_maze
