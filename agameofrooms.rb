@@ -33,6 +33,22 @@ class Game
 		@player = player
 	end
 
+	def start_game
+		while (end_game && @player.evaluate_player_life)
+			ask_user
+			evaluate_turn
+		end
+		end_of_game
+	end
+
+	def end_of_game
+		if @end_game == false
+			puts "CONGRATS, YOU ARE OUT OF THE MAZE"
+		else
+			puts "GAME OVER"
+		end
+	end
+
 	def ask_user
 		puts @maze.list_of_rooms[@position].room_description
 		puts "Please enter where would you like to head"
@@ -85,25 +101,14 @@ room4 = Room.new("You are in a mountain","S")
 room5 = Room.new("You are in Mars","S")
 
 rooms = [room1, room2, room3, room4, room5]
-
 maze1 = Maze.new rooms
 
 # maze1.print_maze
 
 player1 = Player.new
 game1 = Game.new maze1, player1
+game1.start_game
 
-
-while (game1.end_game && player1.evaluate_player_life)
-	game1.ask_user
-	game1.evaluate_turn
-end
-
-if game1.end_game == false
-	puts "CONGRATS, YOU ARE OUT OF THE MAZE"
-else
-	puts "GAME OVER"
-end
 
 
 
