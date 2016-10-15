@@ -26,10 +26,11 @@ end
 
 class Game
 
-	def initialize maze
+	def initialize maze, player
 		@maze = maze
 		@position = 0
 		@end_game = true
+		@player = player
 	end
 
 	def ask_user
@@ -44,6 +45,7 @@ class Game
 			puts "Congrats, you have advanced to room #{@position}"
 		else
 			puts "Try again. You still in room #{@position}"
+			@player.substract_life
 		end
 	end
 
@@ -52,6 +54,26 @@ class Game
 			@end_game = false
 		else
 			@end_game
+		end
+	end
+end
+
+class Player
+
+	def initialize 
+		@lifes = 2
+		@player_alive = true
+	end
+
+	def substract_life
+		@lifes = @lifes - 1
+	end
+
+	def evaluate_player_life
+		if @lifes > 0
+			@player_alive = true
+		else
+			@player_alive = false
 		end
 	end
 end
@@ -68,14 +90,20 @@ maze1 = Maze.new rooms
 
 # maze1.print_maze
 
-game1 = Game.new maze1
+player1 = Player.new
+game1 = Game.new maze1, player1
 
 
-while (game1.end_game)
+while (game1.end_game && player1.evaluate_player_life)
 	game1.ask_user
 	game1.evaluate_turn
 end
-puts "CONGRATS, YOU ARE OUT OF THE MAZE"
+
+if game1.end_game == false
+	puts "CONGRATS, YOU ARE OUT OF THE MAZE"
+else
+	puts "GAME OVER"
+end
 
 
 
